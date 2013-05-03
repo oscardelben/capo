@@ -23,8 +23,8 @@ For now, you'll need a go compiler. You can compile capo by running `go build ca
 ```
 > cat commands
 ls
-sleep 600
-ruby my_script.rb
+sleep 3 && ruby my_script.rb
+# A comment
 pwd
 bundle exec rails s
 ```

@@ -68,7 +68,7 @@ func readCommands(file string, foreman_mode bool) []string {
 	commands := make([]string, 0)
 
 	for _, s := range strings.Split(string(content), "\n") {
-		if s != "" {
+		if s != "" && !strings.HasPrefix(s, "#") {
 			if foreman_mode {
 				c := strings.SplitN(s, ":", 2)[1]
 				commands = append(commands, strings.Trim(c, " "))
@@ -82,8 +82,8 @@ func readCommands(file string, foreman_mode bool) []string {
 }
 
 func runCommandString(command string, processList chan *os.Process, errorChan chan error, done chan bool) {
-	parts := strings.Split(command, " ")
-	cmd := exec.Command(parts[0], parts[1:]...)
+	// Use sh -c '..' so that people can use && and all that stuff
+	cmd := exec.Command("sh", "-c", command)
 	cmd.Stdout = os.Stdout
 	cmd.Stdin = os.Stdin
 	cmd.Stderr = os.Stderr

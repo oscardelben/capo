@@ -17,7 +17,7 @@ const (
 func main() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
-	fmt.Println("Starting capo...")
+	fmt.Println("[CAPO] Starting capo...")
 
 	var commands []string
 
@@ -45,14 +45,16 @@ func main() {
 		go runCommandString(command, processList, errorChan, done)
 	}
 
+
 	for doneCount != allDone {
 		select {
 		case <-done:
 			doneCount++
 		case <-sig:
-			fmt.Println("Terminating from signal")
+			fmt.Println("[CAPO] Terminating from signal")
 			stopProcesses(processList)
 		case <-errorChan:
+			fmt.Println("[CAPO] Error received")
 			stopProcesses(processList)
 		}
 	}
@@ -61,7 +63,7 @@ func main() {
 func readCommands(file string, foreman_mode bool) []string {
 	content, err := ioutil.ReadFile(file)
 	if err != nil {
-		fmt.Println("Could not read file", file)
+		fmt.Println("[CAPO] Could not read file", file)
 		os.Exit(1)
 	}
 
@@ -96,6 +98,7 @@ func runCommandString(command string, processList chan *os.Process, errorChan ch
 	if err == nil {
 		done <- true
 	} else {
+		fmt.Println("[CAPO] Received error from " + command)
 		errorChan <- err
 	}
 
